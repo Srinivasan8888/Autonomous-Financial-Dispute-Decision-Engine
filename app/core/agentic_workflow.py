@@ -52,6 +52,17 @@ def evaluator_node(state: DisputeGraphState):
     request = state["request"]
     policies = state["retrieved_policies"]
     
+    if not llm:
+        # Dummy fallback if LLM fail to load
+        decision = DecisionResponse(
+            decision="Auto Refund Eligible (MOCK API KEY MISSING)",
+            risk_score=0.1,
+            confidence=0.99,
+            policy_clause="Mocked-Rule-1.1",
+            reasoning_chain=["Dummy API Key", "Assumed refund"]
+        )
+        return {"decision": decision}
+        
     parser = PydanticOutputParser(pydantic_object=DecisionResponse)
     
     prompt = ChatPromptTemplate.from_messages([
@@ -85,7 +96,7 @@ def evaluator_node(state: DisputeGraphState):
             "bank": request.bank
         })
     except Exception as e:
-        # Dummy fallback if LLM fails
+        # Dummy fallback if LLM fails dynamically
         decision = DecisionResponse(
             decision=f"Failed to parse LLM: {str(e)}",
             risk_score=0.99,
