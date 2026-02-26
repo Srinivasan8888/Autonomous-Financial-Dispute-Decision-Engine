@@ -1,0 +1,31 @@
+<!doctype html><html lang="en" class="scrollable-container" id="main-container"><head><meta name="google-site-verification" content="8Z-kxAdTYCSa_qMopVuEUjoLXA23mL2hfe9cHc5DLcs"/><meta charset="utf-8"/><link rel="icon" type="image/x-icon" href="/favicons.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="title" content="National Payments Corporation of India (NPCI) - Enabling digital payments in India"/><meta name="description" content="National Payments Corporation of India is an Umbrella Organisation that facilitates services like UPI Payment, Bharat Bill Pay, RuPay Card, FASTag, NACH, UPI &amp; Adhaar Based Digital Payments in India. Know More."/><link rel="apple-touch-icon" href="/favicons.ico"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><link rel="manifest" href="/manifest.json"/><title>National Payments Corporation of India (NPCI) - Enabling digital payments in India</title><script async src="https://www.googletagmanager.com/gtag/js?id=G-PENT2G77GZ"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-PENT2G77GZ")</script><script defer="defer" src="/static/js/main.3eeffaf7.js"></script><link href="/static/css/main.683cee25.css" rel="stylesheet"></head><body>
+<script type="text/javascript">
+(function(){
+window["loaderConfig"] = "/TSPD/?type=21";
+})();
+
+</script>
+
+<script type="text/javascript" src="/TSPD/?type=18"></script>
+
+<APM_DO_NOT_TOUCH>
+
+<script type="text/javascript">
+(function(){
+window.YlJx=!!window.YlJx;try{(function(){(function(){})();var _s=64;try{var is,Js,Ls=S(734)?1:0,Os=S(132)?1:0,sS=S(673)?1:0,Ji=S(439)?1:0,li=S(907)?0:1,oi=S(28)?1:0;for(var iS=(S(849),0);iS<Js;++iS)Ls+=S(313)?2:1,Os+=S(584)?2:1,sS+=S(964)?1:2,Ji+=(S(545),2),li+=(S(755),2),oi+=(S(945),3);is=Ls+Os+sS+Ji+li+oi;window.lI===is&&(window.lI=++is)}catch(IS){window.lI=is}var LS=!0;
+function OS(s){var _=15;!s||document[L(_,133,120,130,120,113,120,123,120,131,136,98,131,112,131,116)]&&document[L(_,133,120,130,120,113,120,123,120,131,136,98,131,112,131,116)]!==I(68616527651,_)||(LS=!1);return LS}function L(s){var _=arguments.length,J=[];for(var O=1;O<_;++O)J.push(arguments[O]-s);return String.fromCharCode.apply(String,J)}function I(s,_){s+=_;return s.toString(36)}function zS(){}OS(window[zS[L(_s,174,161,173,165)]]===zS);OS(typeof ie9rgb4!==L(_s,166,181,174,163,180,169,175,174));
+OS(RegExp("\x3c")[I(1372141,_s)](function(){return"\x3c"})&!RegExp(I(42825,_s))[l(_s,180,165,179,180)](function(){return"'x3'+'d';"}));
+var s_=window[L(_s,161,180,180,161,163,168,133,182,165,174,180)]||RegExp(L(_s,173,175,162,169,188,161,174,164,178,175,169,164),L(_s,169))[I(1372141,_s)](window["\x6e\x61vi\x67a\x74\x6f\x72"]["\x75\x73e\x72A\x67\x65\x6et"]),S_=+new Date+(S(126)?6E5:781468),i_,j_,J_,o_=window[L(_s,179,165,180,148,169,173,165,175,181,180)],O_=s_?S(227)?3E4:43520:S(858)?7721:6E3;
+document[L(_s,161,164,164,133,182,165,174,180,140,169,179,180,165,174,165,178)]&&document[L(_s,161,164,164,133,182,165,174,180,140,169,179,180,165,174,165,178)](l(_s,182,169,179,169,162,169,172,169,180,185,163,168,161,174,167,165),function(s){var _=87;document[l(_,205,192,202,192,185,192,195,192,203,208,170,203,184,203,188)]&&(document[L(_,205,192,202,192,185,192,195,192,203,208,170,203,184,203,188)]===l(_,191,192,187,187,188,197)&&s[l(_,192,202,171,201,204,202,203,188,187)]?J_=!0:document[L(_,205,
+192,202,192,185,192,195,192,203,208,170,203,184,203,188)]===l(_,205,192,202,192,185,195,188)&&(i_=+new Date,J_=!1,Z_()))});function l(s){var _=arguments.length,J=[],O=1;while(O<_)J[O-1]=arguments[O++]-s;return String.fromCharCode.apply(String,J)}function Z_(){if(!document[L(99,212,216,200,213,220,182,200,207,200,198,215,210,213)])return!0;var s=+new Date;if(s>S_&&(S(759)?6E5:897039)>s-i_)return OS(!1);var _=OS(j_&&!J_&&i_+O_<s);i_=s;j_||(j_=!0,o_(function(){j_=!1},S(125)?1:0));return _}Z_();
+var _i=[S(635)?17795081:25009186,S(829)?27611931586:2147483647,S(774)?1558153217:2147483647];function ii(s){var _=94;s=typeof s===l(_,209,210,208,199,204,197)?s:s[L(_,210,205,177,210,208,199,204,197)](S(838)?22:36);var J=window[s];if(!J||!J[L(_,210,205,177,210,208,199,204,197)])return;var O=""+J;window[s]=function(s,_){j_=!1;return J(s,_)};window[s][l(_,210,205,177,210,208,199,204,197)]=function(){return O}}for(var Ii=(S(388),0);Ii<_i[I(1294399141,_s)];++Ii)ii(_i[Ii]);
+OS(!1!==window[L(_s,153,172,138,184)]);window.Li=window.Li||{};window.Li.oSZ="0827694dba16e80077350cfdaaefa199c6d4b0fa3d47a12195d17bb9b2f49ff4a721b03e0707528f0bc548703d2e5f09cf66c1792f93823a554449801ac889e26631cd35d9e0511d76f40dc6e6903eecf3ff474edf962f3cd08c95df51a6e8742f10ca0d79abcad4a348c8e5679099db5fc854bca0da4dffe3e04f0211e238a780ab961fe4eed8661f7867a10fe085534ddd5547ab89a9c8796156238a33df058a2f1409bb7c3e1928a005bf2bfd1ad812c48d35ddd35f1bfed6c7020c9752ad8a7728658d6e9577dff53a1f3dff3feb1dab74ed1815bacb6ba824686735cca772fc5839b662fec8936fa098122adcca";function ji(s){var _=+new Date,J;!document[L(83,196,200,184,197,204,166,184,191,184,182,199,194,197,148,191,191)]||_>S_&&(S(599)?6E5:437954)>_-i_?J=OS(!1):(J=OS(j_&&!J_&&i_+O_<_),i_=_,j_||(j_=!0,o_(function(){j_=!1},S(532)?1:0)));return!(arguments[s]^J)}function S(s){return 836>s}
+(function(){var s=/(\A([0-9a-f]{1,4}:){1,6}(:[0-9a-f]{1,4}){1,1}\Z)|(\A(([0-9a-f]{1,4}:){1,7}|:):\Z)|(\A:(:[0-9a-f]{1,4}){1,7}\Z)/ig,_=document.getElementsByTagName("head")[0],J=[];_&&(_=_.innerHTML.slice(0,1E3));while(_=s.exec(""))J.push(_)})();})();}catch(x){}finally{ie9rgb4=void(0);};function ie9rgb4(a,b){return a>>b>>0};
+
+})();
+
+</script>
+</APM_DO_NOT_TOUCH>
+
+<script type="text/javascript" src="/TSPD/08d1fc67a6ab2000f1a67ab74bafba42062559bcfd24070c879a93d7a129177b700eb4a9fbe8989e?type=17"></script>
+<noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><script>var s=document.createElement("script");s.src="https://digisaathi.info/chatbot/widget/corovercb.lib.min.js",s.type="text/javascript",document.getElementsByTagName("head")[0].appendChild(s)</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-PENT2G77GZ"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-PENT2G77GZ")</script></body></html>

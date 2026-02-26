@@ -1,5 +1,8 @@
 import os
+import warnings
 from qdrant_client import QdrantClient
+
+warnings.filterwarnings("ignore", category=UserWarning, module="qdrant_client")
 
 # Initialize the local embedding model using FastEmbed
 # This runs locally on CPU and costs $0, avoids Microsoft C++ build tools issues on Windows.

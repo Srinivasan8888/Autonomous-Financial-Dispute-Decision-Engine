@@ -1,69 +1,125 @@
-import json
 import os
+import uuid
 from qdrant_client import QdrantClient
+from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+import logging
+
+# Configure basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 EMBEDDING_MODEL_NAME = "BAAI/bge-small-en-v1.5"
 QDRANT_PATH = "./qdrant_db"
 COLLECTION_NAME = "financial_policies"
+DOCS_DIR = "./docs"
 
-MOCK_POLICIES = [
-    {
-        "id": "npci-odr-1.1",
-        "text": "As per NPCI ODR guidelines for UPI, if a transaction fails but the customer's account is debited (double debit or failed transaction), the issuer bank must auto-reverse the transaction within T+1 days. Failure to do so incurs a penalty of Rs 100 per day."
-    },
-    {
-        "id": "rbi-dpss-2.0",
-        "text": "RBI circular on unauthorized transactions states: if a customer reports an unauthorized electronic payment within 3 working days, their liability is ZERO. The bank must credit the amount within 10 working days."
-    },
-    {
-        "id": "merchant-risk-3.4",
-        "text": "For ecommerce merchants, if a refund is initiated by the merchant but fails at the acquiring bank level, the acquiring bank is fully liable to manually process the refund via chargeback mechanism."
-    },
-    {
-        "id": "npci-fraud-4.2",
-        "text": "In cases of UPI fraud where the user proactively shared their OTP or UPI PIN, the customer bears the full liability until the loss is reported to the bank."
-    }
-]
+class SafePyPDFLoader(PyPDFLoader):
+    """Custom loader that catches and ignores corrupted PDF errors."""
+    def load(self):
+        try:
+            return super().load()
+        except Exception as e:
+            logger.warning(f"Failed to load PDF {self.file_path}: {e}")
+            return []
+            
+    def lazy_load(self):
+        try:
+            yield from super().lazy_load()
+        except Exception as e:
+            logger.warning(f"Failed to lazy load PDF {self.file_path}: {e}")
+            yield from []
 
 def ingest_documents():
-    print(f"Connecting to Local QdrantDB at {QDRANT_PATH}...")
+    logger.info(f"Connecting to Local QdrantDB at {QDRANT_PATH}...")
     client = QdrantClient(path=QDRANT_PATH)
     
-    print(f"Setting FastEmbed model: {EMBEDDING_MODEL_NAME}")
+    logger.info(f"Setting FastEmbed model: {EMBEDDING_MODEL_NAME}")
     client.set_model(EMBEDDING_MODEL_NAME)
     
-    print(f"Creating/getting collection: {COLLECTION_NAME}")
+    logger.info(f"Resetting collection: {COLLECTION_NAME} (removing old mock data)")
     try:
-        collections = client.get_collections().collections
-        if not any(c.name == COLLECTION_NAME for c in collections):
-            client.create_collection(
-                collection_name=COLLECTION_NAME,
-                vectors_config=client.get_fastembed_vector_params()
-            )
+        # We delete the old mock collection to make sure we only have real PDFs
+        client.delete_collection(collection_name=COLLECTION_NAME)
+        logger.info("Deleted old collection.")
+    except Exception:
+        pass # It might not exist yet
+        
+    try:
+        # Create fresh collection
+        client.create_collection(
+            collection_name=COLLECTION_NAME,
+            vectors_config=client.get_fastembed_vector_params()
+        )
+        logger.info("Created new collection.")
     except Exception as e:
-        print(f"Collection setup error: {e}")
+        logger.error(f"Collection setup error: {e}")
+        return
     
-    print("Ingesting mock policies...")
-    ids = [i for i in range(len(MOCK_POLICIES))]
-    documents = [p["text"] for p in MOCK_POLICIES]
-    metadata = [{"source_id": p["id"]} for p in MOCK_POLICIES]
+    logger.info(f"Crawling directory {DOCS_DIR} for PDF documents...")
     
-    client.add(
-        collection_name=COLLECTION_NAME,
-        documents=documents,
-        metadata=metadata,
-        ids=ids
+    if not os.path.exists(DOCS_DIR):
+        logger.error(f"Directory {DOCS_DIR} does not exist. Please place PDFs there.")
+        return
+
+    # Use DirectoryLoader to load all PDFs recursively
+    loader = DirectoryLoader(
+        DOCS_DIR, 
+        glob="**/*.pdf", 
+        loader_cls=SafePyPDFLoader,
+        show_progress=True
     )
     
-    print(f"Successfully ingested {len(MOCK_POLICIES)} policies into QdrantDB.")
-    print("Test retrieval:")
+    documents = loader.load()
+    logger.info(f"Loaded {len(documents)} pages from PDFs.")
     
+    if not documents:
+        logger.warning(f"No PDFs found in {DOCS_DIR}. Nothing to ingest.")
+        return
+
+    logger.info("Chunking documents using RecursiveCharacterTextSplitter...")
+    # Split text into bite-sized chunks for better RAG retrieval
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200,
+        length_function=len,
+    )
+    
+    chunks = text_splitter.split_documents(documents)
+    logger.info(f"Created {len(chunks)} chunks from the documents.")
+    
+    # Prepare data for Qdrant
+    texts = [chunk.page_content for chunk in chunks]
+    metadatas = [chunk.metadata for chunk in chunks]
+    ids = [str(uuid.uuid4()) for _ in range(len(chunks))]
+    
+    logger.info("Uploading chunks to Qdrant (this may take a minute computing embeddings locally)...")
+    
+    # Batch add to avoid overwhelming memory on huge datasets
+    batch_size = 25
+    for i in range(0, len(texts), batch_size):
+        end = min(i + batch_size, len(texts))
+        client.add(
+            collection_name=COLLECTION_NAME,
+            documents=texts[i:end],
+            metadata=metadatas[i:end],
+            ids=ids[i:end]
+        )
+        logger.info(f"Uploaded batch {(i//batch_size) + 1} ({end}/{len(texts)} chunks)")
+    
+    logger.info(f"Successfully ingested {len(chunks)} document chunks into QdrantDB.")
+    
+    # Test retrieval
+    logger.info("Testing retrieval for: 'unauthorized debit zero liability'")
     results = client.query(
         collection_name=COLLECTION_NAME,
         query_text="unauthorized debit zero liability",
-        limit=1
+        limit=2
     )
-    print(results)
+    for res in results:
+        logger.info(f"\n--- MATCH (Score: {res.score}) ---")
+        logger.info(f"Source: {res.metadata.get('source', 'Unknown')} (Page {res.metadata.get('page', 'Unknown')})")
+        logger.info(f"Snippet: {res.document[:300]}...\n")
 
 if __name__ == "__main__":
     ingest_documents()

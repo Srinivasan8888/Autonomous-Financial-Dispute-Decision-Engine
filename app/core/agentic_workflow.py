@@ -15,7 +15,7 @@ from app.retrieval.advanced_rag import retrieve_policies
 try:
     llm = ChatGroq(
         temperature=0.1, 
-        model_name="llama3-70b-8192", 
+        model_name="llama-3.3-70b-versatile", 
         groq_api_key=settings.GROQ_API_KEY
     )
 except Exception as e:

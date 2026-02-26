@@ -31,6 +31,11 @@ def test_graph_locally():
         
     except Exception as e:
         print(f"Error during graph execution: {e}")
+        
+    finally:
+        from app.retrieval.advanced_rag import qdrant_client
+        if qdrant_client:
+            qdrant_client.close()
 
 if __name__ == "__main__":
     test_graph_locally()

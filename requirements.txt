@@ -6,10 +6,13 @@ motor==3.6.1
 redis==5.2.1
 celery==5.4.0
 langgraph==0.2.61
-langchain==0.3.13
+langchain==0.3.14
 langchain-groq==0.2.2
+langchain-community==0.3.14
 groq==0.13.1
 qdrant-client==1.17.0
 fastembed==0.7.4
 langfuse==2.57.0
 python-dotenv==1.0.1
+pypdf==5.1.0
+tiktoken==0.8.0
