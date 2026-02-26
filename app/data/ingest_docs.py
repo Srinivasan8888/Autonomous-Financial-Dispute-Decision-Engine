@@ -1,10 +1,10 @@
 import json
 import os
-import chromadb
-from chromadb.utils import embedding_functions
+from qdrant_client import QdrantClient
 
 EMBEDDING_MODEL_NAME = "BAAI/bge-small-en-v1.5"
-CHROMA_PATH = "./chroma_db"
+QDRANT_PATH = "./qdrant_db"
+COLLECTION_NAME = "financial_policies"
 
 MOCK_POLICIES = [
     {
@@ -26,37 +26,44 @@ MOCK_POLICIES = [
 ]
 
 def ingest_documents():
-    print(f"Initializing Local Embeddings: {EMBEDDING_MODEL_NAME}")
-    embedding_func = embedding_functions.SentenceTransformerEmbeddingFunction(model_name=EMBEDDING_MODEL_NAME)
+    print(f"Connecting to Local QdrantDB at {QDRANT_PATH}...")
+    client = QdrantClient(path=QDRANT_PATH)
     
-    print(f"Connecting to ChromaDB at {CHROMA_PATH}...")
-    client = chromadb.PersistentClient(path=CHROMA_PATH)
+    print(f"Setting FastEmbed model: {EMBEDDING_MODEL_NAME}")
+    client.set_model(EMBEDDING_MODEL_NAME)
     
-    collection_name = "financial_policies"
-    
-    print(f"Creating/getting collection: {collection_name}")
-    collection = client.get_or_create_collection(
-        name=collection_name,
-        embedding_function=embedding_func
-    )
+    print(f"Creating/getting collection: {COLLECTION_NAME}")
+    try:
+        collections = client.get_collections().collections
+        if not any(c.name == COLLECTION_NAME for c in collections):
+            client.create_collection(
+                collection_name=COLLECTION_NAME,
+                vectors_config=client.get_fastembed_vector_params()
+            )
+    except Exception as e:
+        print(f"Collection setup error: {e}")
     
     print("Ingesting mock policies...")
-    ids = [p["id"] for p in MOCK_POLICIES]
+    ids = [i for i in range(len(MOCK_POLICIES))]
     documents = [p["text"] for p in MOCK_POLICIES]
+    metadata = [{"source_id": p["id"]} for p in MOCK_POLICIES]
     
-    collection.upsert(
-        ids=ids,
-        documents=documents
+    client.add(
+        collection_name=COLLECTION_NAME,
+        documents=documents,
+        metadata=metadata,
+        ids=ids
     )
     
-    print(f"Successfully ingested {len(MOCK_POLICIES)} policies into ChromaDB.")
+    print(f"Successfully ingested {len(MOCK_POLICIES)} policies into QdrantDB.")
     print("Test retrieval:")
     
-    results = collection.query(
-        query_texts=["unauthorized debit zero liability"],
-        n_results=1
+    results = client.query(
+        collection_name=COLLECTION_NAME,
+        query_text="unauthorized debit zero liability",
+        limit=1
     )
-    print(json.dumps(results, indent=2))
+    print(results)
 
 if __name__ == "__main__":
     ingest_documents()

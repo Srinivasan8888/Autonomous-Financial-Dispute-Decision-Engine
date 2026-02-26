@@ -7,7 +7,7 @@ celery==5.4.0
 langgraph==0.2.61
 langchain==0.3.13
 groq==0.13.1
-sentence-transformers==3.3.1
+qdrant-client==1.17.0
+fastembed==0.7.4
 langfuse==2.57.0
 python-dotenv==1.0.1
-chromadb==0.6.0
