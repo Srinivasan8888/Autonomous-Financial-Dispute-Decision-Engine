@@ -1,4 +1,4 @@
- # Autonomous Financial Dispute Decision Engine
+# Autonomous Financial Dispute Decision Engine
 
 An AI-powered decision engine that evaluates financial transaction disputes based on banking regulations (RBI guidelines, NPCI UPI rules, and merchant policies). Built to run on a **strict $0/month budget** utilizing lightning-fast free-tier LLM APIs and local, CPU-friendly vector databases.
 
@@ -7,10 +7,24 @@ Designed to demonstrate production-grade **AI Engineering** concepts such as Age
 ## 🧠 Core Architecture
 
 - **Agentic Workflow (LangGraph):** A deterministic state machine that processes dispute metadata, retrieves policies, evaluates the rules against the transaction, and self-reflects if confidence is too low.
-- **Advanced RAG ($0 Local DB):** Uses **FastEmbed** (HuggingFace `BAAI/bge-small-en-v1.5`) running locally on the CPU combined with a local **Qdrant** vector database to store and retrieve compliance rules semantically.
-- **Structured Outputs:** Enforces strict Pydantic JSON schemas via the LLM to ensure the API response is always machine-readable (Decision, Risk Score, Confidence, Policy Clause, Reasoning Chain).
-- **Audit Logging:** Asynchronously saves every LLM trace and decision into a free-tier **MongoDB Atlas** cluster for compliance tracking.
+- **Advanced Hybrid RAG ($0 Local DB):** Optimizes retrieval using **Dense Vectors (BGE-Small)** combined with **Sparse Vectors (Splade)** for keyword-exact regulation matching. Powered by **FastEmbed** running locally on the CPU.
+- **Structured Outputs:** Enforces strict Pydantic JSON schemas via the LLM to ensure the API response is always machine-readable.
+- **Audit Logging:** Asynchronously saves every LLM trace and decision into a free-tier **MongoDB Atlas** cluster.
+- **Premium Real-Time Dashboard:** A high-end web interface for submitting disputes and visualizing the agent's reasoning chain.
 - **Lightning-Fast Inference:** Engineered to use **Groq** APIs (Llama 3 70B) for instant reasoning capabilities, falling back to mock outputs if no keys are provided.
+
+---
+
+## 🎨 Premium Dashboard
+
+We've added a custom-built, modern interface to interact with the engine. It features a "Dark Cocoa & Pearl Cream" aesthetic, glassmorphism UI, and real-time reasoning visualization.
+
+**To access:**
+
+1. Start the server (see below).
+2. Open your browser and navigate to `http://localhost:8000/`.
+
+---
 
 ## 🧰 Tech Stack
 
@@ -74,13 +88,13 @@ cp .env.example .env
 
 ### 4. Setup the Vector Database
 
-Before running the API, you must ingest the mock banking regulations (NPCI/RBI rules) into the local Qdrant memory.
+Before running the API, you must ingest the actual banking regulations (NPCI/RBI rules) into the local Qdrant memory.
 
 ```bash
 python -m app.data.ingest_docs
 ```
 
-_This will create a `qdrant_db` folder locally and embed the mock texts._
+_This will create a `qdrant_db` folder locally and embed the regulation texts._
 
 ---
 

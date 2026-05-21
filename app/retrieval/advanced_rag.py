@@ -4,9 +4,9 @@ from qdrant_client import QdrantClient
 
 warnings.filterwarnings("ignore", category=UserWarning, module="qdrant_client")
 
-# Initialize the local embedding model using FastEmbed
-# This runs locally on CPU and costs $0, avoids Microsoft C++ build tools issues on Windows.
+# Models for Hybrid Search
 EMBEDDING_MODEL_NAME = "BAAI/bge-small-en-v1.5"
+SPARSE_MODEL_NAME = "prithivida/Splade_PP_en_v1"
 COLLECTION_NAME = "financial_policies"
 
 # Initialize local Qdrant disk DB
@@ -19,12 +19,16 @@ except Exception as e:
 def ensure_collection():
     if not qdrant_client: return False
     try:
+        # Initialize models for dense and sparse embeddings
         qdrant_client.set_model(EMBEDDING_MODEL_NAME)
+        qdrant_client.set_sparse_model(SPARSE_MODEL_NAME)
+        
         collections = qdrant_client.get_collections().collections
         if not any(c.name == COLLECTION_NAME for c in collections):
             qdrant_client.create_collection(
                 collection_name=COLLECTION_NAME,
-                vectors_config=qdrant_client.get_fastembed_vector_params()
+                vectors_config=qdrant_client.get_fastembed_vector_params(),
+                sparse_vectors_config=qdrant_client.get_fastembed_sparse_vector_params()
             )
         return True
     except Exception as e:
@@ -36,13 +40,14 @@ is_ready = ensure_collection()
 
 def retrieve_policies(query: str, top_k: int = 3) -> str:
     """
-    Performs a vector search on the local QdrantDB for the given query using FastEmbed.
+    Performs a Hybrid Search (Dense + Sparse) on the local QdrantDB.
     Returns a concatenated string of the most relevant policy documents.
     """
     if not is_ready or not qdrant_client:
         return "No DB Connection. Mock Policy: NPCI-ODR-Rule-5.2 - If transaction fails but debit occurs, auto-refund within T+1 days."
         
     try:
+        # Hybrid Search: Qdrant automatically combines dense and sparse vectors
         results = qdrant_client.query(
             collection_name=COLLECTION_NAME,
             query_text=query,

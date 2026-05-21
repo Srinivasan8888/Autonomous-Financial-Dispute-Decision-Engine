@@ -1,7 +1,9 @@
 import asyncio
 from app.models.schemas import DisputeRequest
-from app.core.agentic_workflow import app_graph
 import json
+from langfuse.callback import CallbackHandler
+from app.config import settings
+from app.core.agentic_workflow import app_graph
 
 def test_graph_locally():
     print("Initializing dummy dispute request...")
@@ -21,9 +23,28 @@ def test_graph_locally():
         "retries": 0
     }
     
-    print("Invoking LangGraph locally...")
+    print("Invoking LangGraph locally with Langfuse tracing...")
+    
+    # Initialize Langfuse Handler
+    langfuse_handler = CallbackHandler(
+        public_key=settings.LANGFUSE_PUBLIC_KEY,
+        secret_key=settings.LANGFUSE_SECRET_KEY,
+        host=settings.LANGFUSE_HOST
+    )
+    
     try:
-        result = app_graph.invoke(initial_state)
+        result = app_graph.invoke(
+            initial_state, 
+            config={"callbacks": [langfuse_handler]}
+        )
+        
+        trace_id = langfuse_handler.get_trace_id()
+        print(f"\nTrace generated! Trace ID: {trace_id}")
+        print(f"View trace: {settings.LANGFUSE_HOST}/project/{settings.LANGFUSE_PUBLIC_KEY}/traces/{trace_id}")
+        
+        # Ensure all traces are sent
+        langfuse_handler.flush()
+        
         decision = result.get("decision")
         
         print("\n=== FINAL DECISION ===")

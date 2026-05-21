@@ -1,8 +1,11 @@
+import logging
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from contextlib import asynccontextmanager
+
 from app.config import settings
 from app.api.endpoints import router as dispute_router
-import logging
 
 # Configure basic logging
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +26,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Include API routes
 app.include_router(dispute_router, prefix="/api/v1")
+
+# Serve static files for the Premium Dashboard
+try:
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
+except Exception as e:
+    logger.warning(f"Static directory mounting failed: {e}")
+
+@app.get("/")
+async def root():
+    """Redirect home to the premium dashboard."""
+    return RedirectResponse(url="/static/dashboard.html")
 
 @app.get("/health")
 async def health_check():
